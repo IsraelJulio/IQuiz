@@ -1,0 +1,11 @@
+//= link_tree ../images
+//= link_directory ../stylesheets .css
+//= link application.css
+//= link application.js
+//= link controllers/application.js
+//= link controllers/index.js
+//= link controllers/card_controller.js
+//= link controllers/confetti_controller.js
+//= link controllers/flash_controller.js
+//= link controllers/theme_controller.js
+//= link_tree ../builds

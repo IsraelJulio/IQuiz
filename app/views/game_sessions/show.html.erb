@@ -1,0 +1,122 @@
+<%
+  gs       = @game_session
+  card     = gs.current_card
+  question = gs.direction == "front" ? card&.front : card&.back
+  answer   = gs.direction == "front" ? card&.back  : card&.front
+  total    = gs.card_order.length
+  current  = gs.current_card_index + 1
+%>
+
+<div class="max-w-lg mx-auto space-y-4" data-controller="card" data-card-written-value="<%= gs.written? %>">
+
+  <!-- Header: deck name + mode -->
+  <div class="flex items-center justify-between text-sm text-gray-400">
+    <span>📚 <%= gs.deck_name %></span>
+    <span class="font-medium text-gray-600 dark:text-gray-400"><%= gs.mode_label %></span>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="space-y-1">
+    <div class="flex justify-between text-xs text-gray-400">
+      <span>Card <%= current %> de <%= total %></span>
+      <span><%= gs.progress_pct %>%</span>
+    </div>
+    <div class="h-2 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+      <div class="h-full bg-gradient-to-r from-brand-500 to-indigo-500 rounded-full transition-all duration-500"
+           style="width: <%= gs.progress_pct %>%"></div>
+    </div>
+  </div>
+
+  <!-- Score strip -->
+  <div class="flex justify-between text-sm font-semibold px-1">
+    <span class="text-brand-600 dark:text-brand-400">⚡ <%= gs.total_points.to_f.round(1) %> pts</span>
+    <span class="text-orange-500">🔥 <%= gs.current_streak %> streak</span>
+    <span class="text-emerald-600 dark:text-emerald-400">
+      <%= gs.cards_total > 0 ? "#{gs.accuracy}%" : "—" %>
+    </span>
+  </div>
+
+  <% if gs.anti_grind %>
+    <div class="text-center text-xs bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400
+                rounded-xl px-3 py-2 border border-amber-200 dark:border-amber-800">
+      ⚠️ Anti-grind ativo: pontuação reduzida (mesma lista em menos de 3h)
+    </div>
+  <% end %>
+
+  <!-- Card -->
+  <div class="relative" style="perspective: 1200px">
+    <div class="card-inner w-full" data-card-target="inner">
+
+      <!-- Front face (question) -->
+      <div class="card-face card-front bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100
+                  dark:border-gray-800 p-6 min-h-[200px] flex flex-col justify-center items-center text-center">
+        <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
+          <%= gs.direction == "front" ? "Frente" : "Verso" %> ·
+          <%= gs.direction_label %>
+        </p>
+        <p class="text-2xl font-bold text-gray-800 dark:text-gray-100 leading-snug"><%= question %></p>
+      </div>
+
+      <!-- Back face (answer) -->
+      <div class="card-face card-back bg-gradient-to-br from-brand-50 to-indigo-50
+                  dark:from-brand-950 dark:to-indigo-950 rounded-2xl shadow-lg border border-brand-200
+                  dark:border-brand-800 p-6 min-h-[200px] flex flex-col justify-center items-center text-center">
+        <p class="text-xs font-semibold uppercase tracking-widest text-brand-400 mb-4">Resposta</p>
+        <p class="text-2xl font-bold text-brand-700 dark:text-brand-300 leading-snug"><%= answer %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Written input (shown before reveal) -->
+  <% if gs.written? %>
+    <div data-card-target="writtenArea" class="space-y-3">
+      <textarea data-card-target="writtenInput"
+                placeholder="Digite sua resposta..."
+                rows="2"
+                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700
+                       bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100
+                       focus:border-brand-500 focus:outline-none transition-colors resize-none text-lg"></textarea>
+    </div>
+  <% end %>
+
+  <!-- Action buttons -->
+  <div data-card-target="actionArea" class="space-y-3">
+
+    <!-- REVEAL button (shown first) -->
+    <button data-card-target="revealBtn"
+            data-action="click->card#reveal"
+            class="w-full py-4 rounded-2xl bg-gray-800 dark:bg-gray-700 hover:bg-gray-900 dark:hover:bg-gray-600
+                   text-white font-extrabold text-lg transition-colors active:scale-95 transform duration-100">
+      👁 Revelar Resposta
+    </button>
+
+    <!-- CORRECT/WRONG buttons (hidden until reveal) -->
+    <div data-card-target="judgmentBtns" class="hidden grid grid-cols-2 gap-3">
+      <%= form_with url: answer_game_session_path(gs), method: :post, class: "contents" do %>
+        <input type="hidden" name="correct" value="false" />
+        <button type="submit"
+                class="py-4 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-extrabold text-lg
+                       transition-colors active:scale-95 transform duration-100 shadow-lg shadow-red-200 dark:shadow-none">
+          ✗ Errei
+        </button>
+      <% end %>
+      <%= form_with url: answer_game_session_path(gs), method: :post, class: "contents" do %>
+        <input type="hidden" name="correct" value="true" />
+        <button type="submit"
+                class="py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-lg
+                       transition-colors active:scale-95 transform duration-100 shadow-lg shadow-emerald-200 dark:shadow-none">
+          ✓ Acertei
+        </button>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Multiplier hint -->
+  <% mult = gs.streak_multiplier %>
+  <% if mult > 1 %>
+    <div class="text-center text-xs text-orange-500 font-semibold animate-bounce-in">
+      🔥 Multiplicador ×<%= mult %> ativo!
+    </div>
+  <% end %>
+
+</div>

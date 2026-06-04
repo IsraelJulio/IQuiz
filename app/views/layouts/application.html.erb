@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full" data-controller="theme">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>IQuiz 🧠</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+</head>
+<body class="h-full bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200"
+      data-controller="confetti">
+
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-800">
+    <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
+      <%= link_to root_path, class: "flex items-center gap-2 font-extrabold text-xl text-brand-600 dark:text-brand-400 tracking-tight" do %>
+        <span class="text-2xl">🧠</span>
+        <span>IQuiz</span>
+      <% end %>
+
+      <div class="flex items-center gap-2">
+        <!-- Dark mode toggle -->
+        <button data-action="click->theme#toggle"
+                class="w-9 h-9 rounded-full flex items-center justify-center
+                       bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700
+                       transition-colors text-lg"
+                title="Alternar tema">
+          <span class="dark:hidden">🌙</span>
+          <span class="hidden dark:inline">☀️</span>
+        </button>
+
+        <!-- Decks nav -->
+        <%= link_to "📚 Listas", decks_path,
+              class: "hidden sm:inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium
+                      bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300
+                      hover:bg-brand-100 dark:hover:bg-brand-900/50 transition-colors" %>
+
+        <!-- Auth -->
+        <% if israel_logged_in? %>
+          <%= button_to logout_path, method: :delete,
+                class: "px-3 py-1.5 rounded-lg text-sm font-medium
+                        bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300
+                        hover:bg-red-100 transition-colors" do %>
+            Sair
+          <% end %>
+        <% else %>
+          <%= link_to "🔐 Login", login_path,
+                class: "px-3 py-1.5 rounded-lg text-sm font-medium
+                        bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300
+                        hover:bg-gray-200 transition-colors" %>
+        <% end %>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash -->
+  <% if notice.present? %>
+    <div id="flash-notice"
+         class="max-w-5xl mx-auto px-4 pt-4"
+         data-controller="flash">
+      <div class="p-3 rounded-xl bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800
+                  text-green-800 dark:text-green-300 text-sm font-medium flex items-center justify-between gap-2">
+        <span><%= notice %></span>
+        <button data-action="click->flash#dismiss" class="text-green-600 hover:text-green-800 font-bold">✕</button>
+      </div>
+    </div>
+  <% end %>
+
+  <% if alert.present? %>
+    <div id="flash-alert"
+         class="max-w-5xl mx-auto px-4 pt-4"
+         data-controller="flash">
+      <div class="p-3 rounded-xl bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800
+                  text-red-800 dark:text-red-300 text-sm font-medium flex items-center justify-between gap-2">
+        <span><%= alert %></span>
+        <button data-action="click->flash#dismiss" class="text-red-600 hover:text-red-800 font-bold">✕</button>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Main content -->
+  <main class="max-w-5xl mx-auto px-4 py-6 pb-20">
+    <%= yield %>
+  </main>
+
+  <!-- Mobile bottom nav -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur
+              border-t border-gray-200 dark:border-gray-800 sm:hidden">
+    <div class="flex">
+      <%= link_to root_path,
+            class: "flex-1 flex flex-col items-center py-2 text-xs font-medium
+                    text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400" do %>
+        <span class="text-xl">🏠</span>
+        <span>Início</span>
+      <% end %>
+      <%= link_to decks_path,
+            class: "flex-1 flex flex-col items-center py-2 text-xs font-medium
+                    text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400" do %>
+        <span class="text-xl">📚</span>
+        <span>Listas</span>
+      <% end %>
+      <%= link_to new_game_session_path,
+            class: "flex-1 flex flex-col items-center py-2 text-xs font-medium
+                    text-brand-600 dark:text-brand-400" do %>
+        <span class="text-2xl">▶️</span>
+        <span class="font-bold">Jogar</span>
+      <% end %>
+      <%= link_to dashboard_path,
+            class: "flex-1 flex flex-col items-center py-2 text-xs font-medium
+                    text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400" do %>
+        <span class="text-xl">📊</span>
+        <span>Stats</span>
+      <% end %>
+      <% if israel_logged_in? %>
+        <%= link_to import_new_deck_path,
+              class: "flex-1 flex flex-col items-center py-2 text-xs font-medium
+                      text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400" do %>
+          <span class="text-xl">📥</span>
+          <span>Import</span>
+        <% end %>
+      <% else %>
+        <%= link_to login_path,
+              class: "flex-1 flex flex-col items-center py-2 text-xs font-medium
+                      text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400" do %>
+          <span class="text-xl">🔐</span>
+          <span>Login</span>
+        <% end %>
+      <% end %>
+    </div>
+  </nav>
+
+  <!-- User badge -->
+  <div class="fixed bottom-16 sm:bottom-4 right-4 z-30">
+    <div class="px-3 py-1.5 rounded-full text-xs font-bold shadow-lg
+                <%= israel_logged_in? ? 'bg-brand-600 text-white' : 'bg-gray-700 text-gray-200' %>">
+      <%= israel_logged_in? ? "🎮 Israel" : "👾 Player One" %>
+    </div>
+  </div>
+
+</body>
+</html>

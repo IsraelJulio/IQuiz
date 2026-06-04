@@ -1,0 +1,87 @@
+<%
+  session = @game_session
+  pct     = session.accuracy
+  grade_color = pct >= 80 ? "emerald" : pct >= 60 ? "yellow" : "red"
+%>
+
+<div class="max-w-lg mx-auto space-y-6 animate-slide-up"
+     data-controller="<%= @newly_unlocked.any? ? 'confetti' : '' %>">
+
+  <!-- Result header -->
+  <div class="text-center bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-8">
+    <div class="text-6xl mb-3">
+      <%= pct >= 80 ? "🏆" : pct >= 60 ? "😊" : "💪" %>
+    </div>
+    <h1 class="text-3xl font-extrabold mb-1">Sessão Concluída!</h1>
+    <p class="text-gray-500 dark:text-gray-400 text-sm"><%= session.deck_name %> · <%= session.mode_label %> · <%= session.direction_label %></p>
+    <p class="text-xs text-gray-400 mt-1"><%= session.started_at&.strftime("%d/%m/%Y %H:%M") %></p>
+  </div>
+
+  <!-- Stats grid -->
+  <div class="grid grid-cols-2 gap-3">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 text-center shadow-sm">
+      <p class="text-3xl font-extrabold text-brand-600 dark:text-brand-400"><%= session.total_points.to_f.round(1) %></p>
+      <p class="text-xs text-gray-400 font-medium mt-1">Pontos</p>
+    </div>
+
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 text-center shadow-sm">
+      <p class="text-3xl font-extrabold text-<%= grade_color %>-500"><%= pct %>%</p>
+      <p class="text-xs text-gray-400 font-medium mt-1">Acertos</p>
+    </div>
+
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 text-center shadow-sm">
+      <p class="text-3xl font-extrabold text-orange-500"><%= session.max_streak %></p>
+      <p class="text-xs text-gray-400 font-medium mt-1">Maior Streak 🔥</p>
+    </div>
+
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 text-center shadow-sm">
+      <p class="text-3xl font-extrabold text-gray-600 dark:text-gray-300">
+        <%= session.cards_correct %>/<%= session.cards_total %>
+      </p>
+      <p class="text-xs text-gray-400 font-medium mt-1">Cards Corretos</p>
+    </div>
+  </div>
+
+  <!-- Anti-grind notice -->
+  <% if session.anti_grind %>
+    <div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl border border-amber-200 dark:border-amber-800 p-4 text-sm text-amber-700 dark:text-amber-400">
+      ⚠️ <strong>Anti-grind</strong> estava ativo nessa sessão — pontuação foi reduzida à metade por jogar a mesma lista em menos de 3h.
+    </div>
+  <% end %>
+
+  <!-- New achievements! -->
+  <% if @newly_unlocked.any? %>
+    <div class="bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-950 dark:to-amber-950
+                rounded-2xl border border-yellow-200 dark:border-yellow-800 p-5">
+      <h2 class="font-extrabold text-yellow-800 dark:text-yellow-300 mb-3 text-lg">
+        🎉 Conquistas Desbloqueadas!
+      </h2>
+      <div class="space-y-2">
+        <% @newly_unlocked.each do |achievement| %>
+          <div class="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm
+                      animate-bounce-in border border-yellow-100 dark:border-yellow-900">
+            <span class="text-3xl"><%= achievement.icon %></span>
+            <div>
+              <p class="font-bold text-sm"><%= achievement.name %></p>
+              <p class="text-xs text-gray-500 dark:text-gray-400"><%= achievement.description %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Action buttons -->
+  <div class="flex gap-3">
+    <%= link_to "▶ Jogar Novamente",
+          new_game_session_path(deck_id: session.deck_id),
+          class: "flex-1 text-center py-3 rounded-xl bg-brand-600 hover:bg-brand-700
+                  text-white font-bold transition-colors" %>
+    <%= link_to "📊 Dashboard", dashboard_path,
+          class: "px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800
+                  text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-200 transition-colors" %>
+    <%= link_to "📚 Listas", decks_path,
+          class: "px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800
+                  text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-200 transition-colors" %>
+  </div>
+</div>

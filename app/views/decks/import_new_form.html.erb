@@ -1,0 +1,43 @@
+<div class="max-w-lg mx-auto">
+  <%= link_to "← Listas", decks_path, class: "text-sm text-gray-400 hover:text-brand-600 mb-4 inline-block" %>
+  <h1 class="text-2xl font-extrabold mb-2">Importar CSV → Nova Lista</h1>
+  <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Crie uma nova lista a partir de um arquivo CSV</p>
+
+  <%= render "csv_instructions" %>
+
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-md border border-gray-100 dark:border-gray-800 p-6 mt-4">
+    <%= form_with url: import_new_deck_path, method: :post, multipart: true, class: "space-y-4" do |f| %>
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Nome da nova lista <span class="text-red-500">*</span></label>
+        <input type="text" name="deck_name" required placeholder="ex: Vocabulário Inglês"
+               value="<%= @deck&.name %>"
+               class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 dark:border-gray-700
+                      bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100
+                      focus:border-brand-500 focus:outline-none transition-colors" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Descrição (opcional)</label>
+        <input type="text" name="deck_description" placeholder="ex: Capítulo 1 do livro X"
+               class="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 dark:border-gray-700
+                      bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100
+                      focus:border-brand-500 focus:outline-none transition-colors" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Arquivo CSV <span class="text-red-500">*</span></label>
+        <input type="file" name="csv_file" accept=".csv,text/csv" required
+               class="w-full text-sm text-gray-700 dark:text-gray-300
+                      file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0
+                      file:font-semibold file:bg-brand-50 file:text-brand-700
+                      hover:file:bg-brand-100 cursor-pointer" />
+      </div>
+
+      <button type="submit"
+              class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700
+                     text-white font-bold transition-colors">
+        📥 Criar Lista e Importar
+      </button>
+    <% end %>
+  </div>
+</div>

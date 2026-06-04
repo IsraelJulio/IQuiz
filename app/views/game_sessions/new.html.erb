@@ -1,0 +1,95 @@
+<div class="max-w-lg mx-auto space-y-6">
+  <div>
+    <h1 class="text-2xl font-extrabold">▶ Iniciar Jogo</h1>
+    <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Configure sua sessão de estudo</p>
+  </div>
+
+  <%= form_with url: game_sessions_path, method: :post, class: "space-y-5",
+        data: { controller: "game-setup" } do |f| %>
+
+    <!-- Deck selection -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4">
+      <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">
+        📚 Lista
+      </label>
+      <% @decks.each do |deck| %>
+        <label class="flex items-center gap-3 p-3 rounded-xl cursor-pointer
+                      hover:bg-brand-50 dark:hover:bg-brand-900/20 transition-colors
+                      has-[:checked]:bg-brand-50 dark:has-[:checked]:bg-brand-900/30
+                      has-[:checked]:border-brand-300 border border-transparent mb-1">
+          <input type="radio" name="deck_id" value="<%= deck.id %>"
+                 <%= "checked" if @deck&.id == deck.id %>
+                 class="accent-brand-600 w-4 h-4" />
+          <div class="flex-1 min-w-0">
+            <span class="font-semibold text-sm"><%= deck.name %></span>
+            <span class="text-xs text-gray-400 ml-2"><%= deck.card_count %> cards</span>
+          </div>
+        </label>
+      <% end %>
+    </div>
+
+    <!-- Mode selection -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4">
+      <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">
+        🎮 Modo de Jogo
+      </label>
+
+      <% mode_info = {
+        "base"                  => { icon: "🃏", label: "Base",                         desc: "Autoavaliação — veja e diga se acertou" },
+        "base_written"          => { icon: "✏️", label: "Base — Escrita",               desc: "Digite a resposta, depois avalie" },
+        "spaced_list"           => { icon: "🔄", label: "Spaced Repetition (Lista)",    desc: "Revise seus erros desta lista" },
+        "spaced_list_written"   => { icon: "📝", label: "SR (Lista) — Escrita",         desc: "Erros desta lista com digitação" },
+        "spaced_global"         => { icon: "🌍", label: "Spaced Repetition (Geral)",    desc: "Revise seus erros de todas as listas" },
+        "spaced_global_written" => { icon: "🌐", label: "SR (Geral) — Escrita",         desc: "Erros gerais com digitação" },
+      } %>
+
+      <% mode_info.each do |mode, info| %>
+        <label class="flex items-center gap-3 p-3 rounded-xl cursor-pointer
+                      hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors
+                      has-[:checked]:bg-indigo-50 dark:has-[:checked]:bg-indigo-900/30
+                      border border-transparent has-[:checked]:border-indigo-300 mb-1">
+          <input type="radio" name="game_mode" value="<%= mode %>"
+                 <%= "checked" if mode == "base" %>
+                 class="accent-indigo-600 w-4 h-4" />
+          <span class="text-lg"><%= info[:icon] %></span>
+          <div class="flex-1 min-w-0">
+            <span class="font-semibold text-sm block"><%= info[:label] %></span>
+            <span class="text-xs text-gray-400"><%= info[:desc] %></span>
+          </div>
+        </label>
+      <% end %>
+    </div>
+
+    <!-- Direction selection -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4">
+      <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">
+        🔀 Direção
+      </label>
+      <div class="grid grid-cols-2 gap-3">
+        <label class="flex flex-col items-center gap-2 p-4 rounded-xl cursor-pointer border-2
+                      has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50 dark:has-[:checked]:bg-brand-900/30
+                      border-gray-200 dark:border-gray-700 hover:border-brand-300 transition-colors">
+          <input type="radio" name="direction" value="front" checked class="hidden" />
+          <span class="text-2xl">📖→💡</span>
+          <span class="font-semibold text-sm text-center">Frente → Verso</span>
+          <span class="text-xs text-gray-400 text-center">Vê a frente, lembra o verso</span>
+        </label>
+        <label class="flex flex-col items-center gap-2 p-4 rounded-xl cursor-pointer border-2
+                      has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50 dark:has-[:checked]:bg-brand-900/30
+                      border-gray-200 dark:border-gray-700 hover:border-brand-300 transition-colors">
+          <input type="radio" name="direction" value="back" class="hidden" />
+          <span class="text-2xl">💡→📖</span>
+          <span class="font-semibold text-sm text-center">Verso → Frente</span>
+          <span class="text-xs text-gray-400 text-center">Vê o verso, lembra a frente</span>
+        </label>
+      </div>
+    </div>
+
+    <button type="submit"
+            class="w-full py-4 rounded-2xl bg-brand-600 hover:bg-brand-700
+                   text-white font-extrabold text-xl transition-colors
+                   active:scale-95 transform duration-100 shadow-lg shadow-brand-200 dark:shadow-none">
+      ▶ Começar!
+    </button>
+  <% end %>
+</div>

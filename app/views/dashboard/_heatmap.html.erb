@@ -1,0 +1,85 @@
+<%
+  today  = Date.current
+  start  = (today - 12.months).beginning_of_week(:monday)
+  weeks  = []
+  week   = []
+
+  (start..today).each do |date|
+    week << date
+    if date.cwday == 7
+      weeks << week
+      week = []
+    end
+  end
+  weeks << week unless week.empty?
+
+  day_labels = %w[Seg Ter Qua Qui Sex Sáb Dom]
+%>
+
+<div class="overflow-x-auto pb-2">
+  <div class="flex gap-1" style="min-width: max-content">
+    <!-- Day labels -->
+    <div class="flex flex-col gap-1 mr-1">
+      <div class="h-5"></div><!-- spacer for month labels row -->
+      <% day_labels.each do |label| %>
+        <div class="h-3 w-6 text-right text-[9px] text-gray-400 leading-3 flex items-center justify-end">
+          <%= label %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Weeks -->
+    <% weeks.each_with_index do |week_days, wi| %>
+      <div class="flex flex-col gap-1">
+        <!-- Month label on first week of month -->
+        <%
+          show_month = week_days.first&.day.to_i <= 7
+          month_abbr = show_month ? I18n.t("date.abbr_month_names")[week_days.first.month] : nil
+        %>
+        <div class="h-5 text-[9px] text-gray-400 truncate w-3">
+          <%= month_abbr %>
+        </div>
+
+        <!-- Days in week (Mon–Sun), padding empty slots -->
+        <% first_cwday = week_days.first.cwday %>
+        <% (1...first_cwday).each do |_| %>
+          <div class="w-3 h-3"></div>
+        <% end %>
+
+        <% week_days.each do |date| %>
+          <%
+            key  = date.to_s
+            data = @heatmap[key]
+            count    = data ? data[:count] : 0
+            accuracy = data ? data[:accuracy] : 0
+
+            cell_class = if count == 0
+              "bg-gray-100 dark:bg-gray-800"
+            elsif accuracy >= 80
+              "bg-brand-600 dark:bg-brand-400"
+            elsif accuracy >= 60
+              "bg-brand-400 dark:bg-brand-600"
+            else
+              "bg-brand-200 dark:bg-brand-800"
+            end
+
+            is_today = date == today
+            title = count > 0 ? "#{date.strftime('%d/%m/%Y')}: #{count} sess. · #{accuracy.round}% acerto" : date.strftime('%d/%m/%Y')
+          %>
+          <%= link_to dashboard_day_path(date: date.to_s),
+                data: { turbo_stream: true },
+                title: title,
+                class: "w-3 h-3 rounded-sm #{cell_class} hover:ring-2 hover:ring-brand-400
+                        transition-all cursor-pointer #{is_today ? 'ring-2 ring-offset-1 ring-brand-600' : ''}" do %>
+          <% end %>
+        <% end %>
+
+        <!-- Pad end of week -->
+        <% last_cwday = week_days.last.cwday %>
+        <% (last_cwday...7).each do |_| %>
+          <div class="w-3 h-3"></div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

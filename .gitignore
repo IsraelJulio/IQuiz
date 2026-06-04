@@ -1,0 +1,51 @@
+# See https://help.github.com/articles/ignoring-files for more about ignoring files.
+
+# Compiled assets
+/public/assets
+/public/packs
+
+# Environment secrets
+.env
+.env.*
+config/master.key
+config/credentials/*.key
+
+# Ignore development and local config
+/config/database.yml.bak
+appsettings.Development.json
+
+# Logs
+/log/*
+!/log/.keep
+
+# Temp files
+/tmp/*
+!/tmp/.keep
+
+# bundler
+/vendor/bundle
+
+# Node modules (if any)
+node_modules/
+yarn-error.log
+yarn.lock
+
+# DB schema overwrite (keep schema.rb in git)
+/db/*.sqlite3
+/db/*.sqlite3-journal
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Tailwind build output (regenerated at boot)
+/app/assets/builds/
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+/app/assets/builds/*
+!/app/assets/builds/.keep

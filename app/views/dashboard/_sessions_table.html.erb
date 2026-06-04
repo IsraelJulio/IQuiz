@@ -1,0 +1,54 @@
+<% if sessions.empty? %>
+  <div class="text-center py-12 text-gray-400">
+    <p class="text-4xl mb-2">📊</p>
+    <p class="font-medium">Nenhuma sessão encontrada.</p>
+    <p class="text-sm mt-1">Jogue para ver seu histórico aqui!</p>
+  </div>
+<% else %>
+  <div class="overflow-x-auto rounded-xl border border-gray-100 dark:border-gray-800">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">
+          <th class="text-left px-3 py-2 font-semibold">Data</th>
+          <th class="text-left px-3 py-2 font-semibold hidden sm:table-cell">Jogador</th>
+          <th class="text-left px-3 py-2 font-semibold">Lista</th>
+          <th class="text-left px-3 py-2 font-semibold hidden md:table-cell">Modo</th>
+          <th class="text-left px-3 py-2 font-semibold hidden md:table-cell">Dir.</th>
+          <th class="text-right px-3 py-2 font-semibold">Pts</th>
+          <th class="text-right px-3 py-2 font-semibold">%</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50 dark:divide-gray-800">
+        <% sessions.each do |sess| %>
+          <%
+            pct = sess.accuracy
+            color = pct >= 80 ? "text-emerald-600" : pct >= 60 ? "text-yellow-600" : "text-red-500"
+          %>
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+            <td class="px-3 py-2 whitespace-nowrap text-gray-600 dark:text-gray-400">
+              <%= sess.started_at&.strftime("%d/%m %H:%M") %>
+            </td>
+            <td class="px-3 py-2 hidden sm:table-cell font-medium">
+              <%= sess.user.israel? ? "🎮 Israel" : "👾 P1" %>
+            </td>
+            <td class="px-3 py-2 max-w-[120px] truncate font-medium" title="<%= sess.deck_name %>">
+              <%= sess.deck_name %>
+            </td>
+            <td class="px-3 py-2 hidden md:table-cell text-gray-500 dark:text-gray-400 whitespace-nowrap">
+              <%= sess.mode_label.truncate(20) %>
+            </td>
+            <td class="px-3 py-2 hidden md:table-cell text-gray-500 dark:text-gray-400">
+              <%= sess.direction == "front" ? "F→V" : "V→F" %>
+            </td>
+            <td class="px-3 py-2 text-right font-bold text-brand-600 dark:text-brand-400">
+              <%= sess.total_points.to_f.round(1) %>
+            </td>
+            <td class="px-3 py-2 text-right font-bold <%= color %>">
+              <%= pct %>%
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

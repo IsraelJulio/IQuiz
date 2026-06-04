@@ -1,0 +1,25 @@
+<div class="bg-white dark:bg-gray-900 rounded-2xl border border-brand-200 dark:border-brand-800 shadow-sm p-5 animate-slide-up">
+  <h3 class="font-extrabold text-brand-700 dark:text-brand-300 mb-3">
+    📅 Sessões de <%= date.strftime("%d/%m/%Y") %>
+  </h3>
+
+  <% if sessions.empty? %>
+    <p class="text-gray-400 text-sm">Nenhuma sessão neste dia.</p>
+  <% else %>
+    <div class="space-y-2">
+      <% sessions.each do |sess| %>
+        <div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 text-sm">
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold truncate"><%= sess.deck_name %></p>
+            <p class="text-xs text-gray-400"><%= sess.mode_label %> · <%= sess.direction_label %></p>
+            <p class="text-xs text-gray-400"><%= sess.started_at&.strftime("%H:%M") %></p>
+          </div>
+          <div class="text-right flex-shrink-0">
+            <p class="font-bold text-brand-600 dark:text-brand-400"><%= sess.total_points.to_f.round(1) %> pts</p>
+            <p class="text-sm <%= sess.accuracy >= 80 ? 'text-emerald-600' : sess.accuracy >= 60 ? 'text-yellow-600' : 'text-red-500' %> font-semibold"><%= sess.accuracy %>%</p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,26 @@
+<div class="max-w-lg mx-auto">
+  <%= link_to "← Lista", deck_path(@deck), class: "text-sm text-gray-400 hover:text-brand-600 mb-4 inline-block" %>
+  <h1 class="text-2xl font-extrabold mb-2">Importar CSV</h1>
+  <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Adicionar cards à lista <strong><%= @deck.name %></strong></p>
+
+  <%= render "csv_instructions" %>
+
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-md border border-gray-100 dark:border-gray-800 p-6 mt-4">
+    <%= form_with url: import_deck_path(@deck), method: :post, multipart: true, class: "space-y-4" do |f| %>
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Arquivo CSV</label>
+        <input type="file" name="csv_file" accept=".csv,text/csv"
+               class="w-full text-sm text-gray-700 dark:text-gray-300
+                      file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0
+                      file:font-semibold file:bg-brand-50 file:text-brand-700
+                      hover:file:bg-brand-100 cursor-pointer" />
+      </div>
+
+      <button type="submit"
+              class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700
+                     text-white font-bold transition-colors">
+        📥 Importar
+      </button>
+    <% end %>
+  </div>
+</div>
