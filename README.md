@@ -51,9 +51,6 @@ Durante a instalação, defina a senha do usuário `postgres`.
 ## Instalação
 
 ```bash
-# 1. Entre na pasta do projeto
-cd c:/Users/2273129/source/repos/IQuiz
-
 # 2. Instale as gems
 gem install bundler
 bundle install
