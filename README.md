@@ -1,4 +1,4 @@
-# IQuiz 🧠
+# IQuiz
 
 Sistema de estudos por flash cards com perfil gamificado. Mobile-first, construído com Ruby on Rails + Hotwire + Tailwind CSS + PostgreSQL.
 
@@ -146,7 +146,7 @@ Para fazer **logout**: clique em "Sair" no menu superior (canto direito).
 - **Metas** com barras de progresso
 - **Histórico de sessões** com filtros
 
-### Conquistas
+### Conquistas - TODO
 | Conquista | Condição |
 |-----------|----------|
 | 🎮 Primeiro Jogo | Concluir a 1ª sessão |
